@@ -2,9 +2,9 @@
   <div>
   <h1 class="question px-4 py-2">Questioner</h1>
     <div>それって{{question}}？</div>
-   <button @click="answerYes(1)" class="btn border shadow-sm pointer mx-3 my-2 d-block hovergray" type="submit">はい</button>
-   <button @click="answerNo(0)" class="btn border shadow-sm pointer mx-3 my-2 d-block hovergray" type="submit">いいえ</button>
-   <button @click="answerLike(2)" class="btn border shadow-sm pointer mx-3 my-2 d-block hovergray" type="submit">どちらでもない</button>
+   <button @click="answerYes()" class="btn border shadow-sm pointer mx-3 my-2 d-block hovergray" type="submit">はい</button>
+   <button @click="answerNo()" class="btn border shadow-sm pointer mx-3 my-2 d-block hovergray" type="submit">いいえ</button>
+   <button @click="answerLike()" class="btn border shadow-sm pointer mx-3 my-2 d-block hovergray" type="submit">どちらでもない</button>
 
   </div>
 </template>
@@ -15,30 +15,48 @@ export default {
   data(){
     return{
       question:'',
+      questionData:"",
       LangCodeArr:[],
+      NoLangCode:[],
+      YesLangCode:[],
+      Ids:[],
       CategoryLevel:0
     }
   },
   mounted(){
-    axios.get("http://127.0.0.1/api/questioner/A00000?CATEGORY_LEVEL=0")
+    
+    axios.get("http://127.0.0.1/api/questioner/A00009?CATEGORY_LEVEL=0")
     .then(res => {
       this.question = res.data[0]['LANG_NAME'];
-      this.LangCodeArr.push(res.data[0]['LANG_CODE']); 
+      this.questionData = res.data[0];
+      this.LangCodeArr.push(res.data[0]); 
       })
   },
   methods:{
-    answerYes(ans){
-      axios.get("http://127.0.0.1/api/questioner/A00001?LANG_CODES="+this.LangCodeArr.join(",")+"&LANG_CODES_2="+this.LangCodeArr.join(",")+"&CATEGORY_LEVEL="+this.CategoryLevel)
+    answerYes(){
+      this.YesLangCode.push(this.questionData.LANG_CODE)
+      this.connection()
+    },
+    answerNo(){
+      this.NoLangCode.push(this.questionData.LANG_CODE)
+      this.connection()
+    },
+    answerLike(){
+      this.Ids.push(this.questionData.ID)
+      this.connection()
+    },
+    connection(){
+      var yes = this.YesLangCode.length > 0 ? "&LANG_CODES=" + this.YesLangCode + "&LANG_CODES_2=" + this.YesLangCode :"";
+      var no =  this.NoLangCode.length > 0 ? "&NO_LANG_CODES="+ this.NoLangCode:"";
+      var like =this.Ids.length > 0 ?"&IDS=" + this.Ids:"";
+      axios.get("http://127.0.0.1/api/questioner/A00009?CATEGORY_LEVEL="
+      +this.CategoryLevel+yes+no+like)
       .then(res => {
+        console.log(res)
         this.question = res.data[0]['LANG_NAME'];
-        this.LangCodeArr.push(res.data[0]['LANG_CODE']); 
+        this.questionData = res.data[0];
+        this.LangCodeArr.push(res.data[0]); 
       })
-      
-    },
-    answerNo(ans){
-    },
-    answerLike(ans){
-
     }
   }
 }

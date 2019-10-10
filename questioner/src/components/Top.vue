@@ -18,7 +18,7 @@
       <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
       <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
       <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>mm
+    </ul>
     <h3>Ecosystem</h3>
     <ul>
       <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
@@ -38,9 +38,9 @@ export default {
     msg: String
   },
   mounted(){
-    console.log("aa")
     // Ajax通信ライブラリ
-  axios.get("http://haseapp.weblike.jp/api/")
+    console.log("k")
+  axios.get("http://127.0.0.1/api/questioner/A00009?CATEGORY_LEVEL=0")
     .then(res => {
       console.log(res.data)
       })
