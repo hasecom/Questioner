@@ -1,11 +1,15 @@
 <template>
   <div>
   <h1 class="question px-4 py-2">Questioner</h1>
-    <div>それって{{question}}？</div>
+  <div v-if="Isquestion">
+   <div>それって{{question}}？</div>
    <button @click="answerYes()" class="btn border shadow-sm pointer mx-3 my-2 d-block hovergray" type="submit">はい</button>
    <button @click="answerNo()" class="btn border shadow-sm pointer mx-3 my-2 d-block hovergray" type="submit">いいえ</button>
    <button @click="answerLike()" class="btn border shadow-sm pointer mx-3 my-2 d-block hovergray" type="submit">どちらでもない</button>
-
+  </div>
+  <div v-else>
+    それは、{{answer}}ですね！
+  </div>
   </div>
 </template>
 
@@ -20,12 +24,14 @@ export default {
       NoLangCode:[],
       YesLangCode:[],
       Ids:[],
-      CategoryLevel:0
+      CategoryLevel:0,
+      Isquestion:true,
+      answer:""
     }
   },
   mounted(){
     
-    axios.get("http://127.0.0.1/api/questioner/A00009?CATEGORY_LEVEL=0")
+    axios.get("http://haseapp.weblike.jp/api/questioner/A00009?CATEGORY_LEVEL=0")
     .then(res => {
       this.question = res.data[0]['LANG_NAME'];
       this.questionData = res.data[0];
@@ -49,13 +55,17 @@ export default {
       var yes = this.YesLangCode.length > 0 ? "&LANG_CODES=" + this.YesLangCode + "&LANG_CODES_2=" + this.YesLangCode :"";
       var no =  this.NoLangCode.length > 0 ? "&NO_LANG_CODES="+ this.NoLangCode:"";
       var like =this.Ids.length > 0 ?"&IDS=" + this.Ids:"";
-      axios.get("http://127.0.0.1/api/questioner/A00009?CATEGORY_LEVEL="
+      axios.get("http://haseapp.weblike.jp/api/questioner/A00009?CATEGORY_LEVEL="
       +this.CategoryLevel+yes+no+like)
       .then(res => {
-        console.log(res)
+        if(res.data[0] == null){
+        this.Isquestion = false;
+        }else{
+        this.answer = res.data[0]["CATEGORY_NAME"];
         this.question = res.data[0]['LANG_NAME'];
         this.questionData = res.data[0];
         this.LangCodeArr.push(res.data[0]); 
+        }
       })
     }
   }
